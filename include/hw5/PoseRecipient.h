@@ -5,7 +5,7 @@
 
 class PoseRecipient {
 public:
-  virtual void receivePose(geometry_msgs::Pose &pose) = 0;
+  virtual void receivePose(const geometry_msgs::Pose &pose) = 0;
 };
 
 #endif

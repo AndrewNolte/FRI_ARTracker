@@ -136,27 +136,13 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(hw5_node
-  src/hw5_node.cpp      
-  src/NavPR.cpp
-  src/NavFixPR.cpp
-  src/OffsetFlipPR.cpp
-  src/OffsetPR.cpp
-  src/OffsetR.cpp
-  src/OffsetTR.cpp
-  src/SplitterPR.cpp
-  src/TFBroadcastPR.cpp src/AlvarMarker.cpp         src/ROSINFOPoseRecipient.cpp
+  src/hw5_node.cpp
+  src/TFBroadcastPR.cpp
+  src/AlvarMarker.cpp
 )
 
 add_executable(hw5_nav_node
-  src/hw5_nav_node.cpp      
-  src/NavPR.cpp
-  src/NavFixPR.cpp
-  src/OffsetFlipPR.cpp
-  src/OffsetPR.cpp
-  src/OffsetR.cpp
-  src/OffsetTR.cpp
-  src/SplitterPR.cpp
-  src/TFBroadcastPR.cpp src/AlvarMarker.cpp         src/ROSINFOPoseRecipient.cpp
+  src/hw5_nav_node.cpp
 )
 
 ## Rename C++ executable without prefix

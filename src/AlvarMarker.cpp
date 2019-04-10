@@ -1,7 +1,6 @@
 #include "hw5/AlvarMarker.h"
 
-AlvarMarker::AlvarMarker(ros::NodeHandle &n, tf::TransformListener &tf_l
-    , PoseRecipient &prIn, std::string fromFrame) : tfL(tf_l), pr(prIn), _fromFrame(fromFrame) {
+AlvarMarker::AlvarMarker(ros::NodeHandle &n, tf::TransformListener &tf_l, PoseRecipient &prIn, std::string fromFrame) : tfL(tf_l), pr(prIn), _fromFrame(fromFrame) {
   //subscriber to get tag information
   vis_sub = n.subscribe("/visualization_marker", 1, &AlvarMarker::vis_cb, this);
 }
