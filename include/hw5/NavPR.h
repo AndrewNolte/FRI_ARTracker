@@ -15,13 +15,12 @@ typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseCl
 
 class NavPR : public PoseRecipient {
 public:
-  NavPR(tf::TransformListener &tfL, MoveBaseClient &ac);
+  NavPR(MoveBaseClient &ac);
 
-  void receivePose(geometry_msgs::Pose &pose);
+  void nav_callback(geometry_msgs::PoseStamped &pose);
 
 protected:
   MoveBaseClient &_ac;
-  tf::TransformListener &_tfL;
 };
 
 #endif
