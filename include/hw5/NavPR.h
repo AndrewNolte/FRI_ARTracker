@@ -9,7 +9,7 @@
 #include <move_base_msgs/MoveBaseAction.h>
 #include <actionlib/client/simple_action_client.h>
 
-#include <Eigen/Geometry> 
+#include <Eigen/Geometry>
 
 typedef actionlib::SimpleActionClient<move_base_msgs::MoveBaseAction> MoveBaseClient;
 
@@ -17,10 +17,10 @@ class NavPR : public PoseRecipient {
 public:
   NavPR(MoveBaseClient &ac);
 
-  void nav_callback(geometry_msgs::PoseStamped &pose);
+  void navCb(geometry_msgs::PoseStamped &pose);
 
 protected:
-  MoveBaseClient &_ac;
+  MoveBaseClient &actionClient;
 };
 
 #endif
