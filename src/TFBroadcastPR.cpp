@@ -5,10 +5,7 @@
 #include <Eigen/Dense>
 
 TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node) 
-  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)) {
-
-
-}
+  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)) {}
 
 void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   std::cout << "published" << std::endl;

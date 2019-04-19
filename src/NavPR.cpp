@@ -1,12 +1,12 @@
-#include "NavPR.h"
+#include "hw5/NavPR.h"
 #include <math.h>
 #include <tf/tf.h>
 
-NavPR::NavPR(MoveBaseClient &ac) {
-	actionClient = ac;
-}
+NavPR::NavPR(MoveBaseClient &ac) : actionClient(ac) {}
 
-void NavPR::navCb(geometry_msgs::PoseStamped &pose) {
+void NavPR::receivePose(const geometry_msgs::Pose &pose) {}
+
+void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	// Determine quaternion orientation to turn to
 	double turnAngle = atan2(pose.pose.position.x, pose.pose.position.y);
 	tf::Quaternion quat;
@@ -16,14 +16,14 @@ void NavPR::navCb(geometry_msgs::PoseStamped &pose) {
 
 	// Turn to face marker
 	geometry_msgs::PoseStamped turnPose;
-	turnPose.position.x = 0;
-	turnPose.position.y = 0;
-	turnPose.position.z = 0;
-	turnPose.orientation = goalOrientation;
+	turnPose.pose.position.x = 0;
+	turnPose.pose.position.y = 0;
+	turnPose.pose.position.z = 0;
+	turnPose.pose.orientation = goalOrientation;
 	turnPose.header = pose.header;
 
 	move_base_msgs::MoveBaseGoal turnGoal;
-	turnGoal.pose = turnPose;
+	turnGoal.target_pose = turnPose;
 	actionClient.sendGoal(turnGoal);
 	actionClient.waitForResult();
 
@@ -36,7 +36,7 @@ void NavPR::navCb(geometry_msgs::PoseStamped &pose) {
 	goalPose.header = pose.header;
 
 	move_base_msgs::MoveBaseGoal goal;
-	goal.pose = goalPose;
+	goal.target_pose = goalPose;
 	actionClient.sendGoal(goal);
 	actionClient.waitForResult();
 }

@@ -17,7 +17,9 @@ class NavPR : public PoseRecipient {
 public:
   NavPR(MoveBaseClient &ac);
 
-  void navCb(geometry_msgs::PoseStamped &pose);
+  void receivePose(const geometry_msgs::Pose &pose);
+
+  void navCb(const geometry_msgs::PoseStamped &pose);
 
 protected:
   MoveBaseClient &actionClient;

@@ -143,6 +143,9 @@ add_executable(hw5_node
 
 add_executable(hw5_nav_node
   src/hw5_nav_node.cpp
+  src/TFBroadcastPR.cpp
+  src/AlvarMarker.cpp
+  src/NavPR.cpp
 )
 
 ## Rename C++ executable without prefix
