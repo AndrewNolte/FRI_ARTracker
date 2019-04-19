@@ -7,8 +7,8 @@ NavPR::NavPR(MoveBaseClient &ac) : actionClient(ac) {}
 void NavPR::receivePose(const geometry_msgs::Pose &pose) {}
 
 void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
-	// Determine quaternion orientation to turn to
-	double turnAngle = atan2(pose.pose.position.x, pose.pose.position.y);
+	/*// Determine quaternion orientation to turn to
+	double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
 	tf::Quaternion quat;
 	quat.setRPY(0, 0, turnAngle);
 	geometry_msgs::Quaternion goalOrientation;
@@ -37,6 +37,17 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 
 	move_base_msgs::MoveBaseGoal goal;
 	goal.target_pose = goalPose;
+	actionClient.sendGoal(goal);
+	actionClient.waitForResult();*/
+
+	geometry_msgs::PoseStamped goalPose;
+	goalPose.pose.position.x = 0.25;
+	goalPose.pose.position.y = 0;
+	goalPose.pose.position.z = 0;
+	goalPose.pose.orientation = pose.orientation;
+
+	move_base_msgs::MoveBaseGoal moveGoal;
+	moveGoal.target_pose = goalPose;
 	actionClient.sendGoal(goal);
 	actionClient.waitForResult();
 }
