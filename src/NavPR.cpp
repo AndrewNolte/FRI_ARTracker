@@ -48,6 +48,6 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 
 	move_base_msgs::MoveBaseGoal moveGoal;
 	moveGoal.target_pose = goalPose;
-	actionClient.sendGoal(goal);
+	actionClient.sendGoal(moveGoal);
 	actionClient.waitForResult();
 }
