@@ -44,7 +44,7 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	goalPose.pose.position.x = 0.25;
 	goalPose.pose.position.y = 0;
 	goalPose.pose.position.z = 0;
-	goalPose.pose.orientation = pose.orientation;
+	goalPose.pose.orientation = pose.pose.orientation;
 
 	move_base_msgs::MoveBaseGoal moveGoal;
 	moveGoal.target_pose = goalPose;
