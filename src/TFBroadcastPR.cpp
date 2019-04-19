@@ -8,6 +8,7 @@ TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node)
   : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)) {}
 
 void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
+  std::cout << "TFBroadcastPR callback triggered" << std::endl;
 
   Eigen::Quaterniond rot(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
   Eigen::MatrixXd newPoseRotated(3, 1);

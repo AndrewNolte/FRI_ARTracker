@@ -1,6 +1,7 @@
 #include "hw5/NavPR.h"
 #include <math.h>
 #include <tf/tf.h>
+#include <iostream>
 
 NavPR::NavPR(MoveBaseClient &ac) : actionClient(ac) {}
 
@@ -39,6 +40,8 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	goal.target_pose = goalPose;
 	actionClient.sendGoal(goal);
 	actionClient.waitForResult();*/
+
+	std::cout << "NavPR callback triggered" << std::endl;
 
 	geometry_msgs::PoseStamped goalPose;
 	goalPose.pose.position.x = 0.25;
