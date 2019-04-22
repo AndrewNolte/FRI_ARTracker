@@ -21,6 +21,8 @@ public:
 
   void navCb(const geometry_msgs::PoseStamped &pose);
 
+  void transformPose(tf::StampedTransform &transform, geometry:msgs::PoseStamped &pose);
+
 protected:
   MoveBaseClient &actionClient;
 };

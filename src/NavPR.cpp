@@ -8,7 +8,9 @@ NavPR::NavPR(MoveBaseClient &ac) : actionClient(ac) {}
 void NavPR::receivePose(const geometry_msgs::Pose &pose) {}
 
 void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
-	/*// Determine quaternion orientation to turn to
+	std::cout << "NavPR callback triggered" << std::endl;
+
+	// Determine quaternion orientation to turn to
 	double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
 	tf::Quaternion quat;
 	quat.setRPY(0, 0, turnAngle);
@@ -22,6 +24,11 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	turnPose.pose.position.z = 0;
 	turnPose.pose.orientation = goalOrientation;
 	turnPose.header = pose.header;
+
+	// Transform to robot frame
+	tf:TransformListener listener;
+	tf:StampedTransform transform;
+	listener.lookupTransform("camera_rgb_link", "base_link", ros::Time(0), transform);
 
 	move_base_msgs::MoveBaseGoal turnGoal;
 	turnGoal.target_pose = turnPose;
@@ -39,11 +46,9 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	move_base_msgs::MoveBaseGoal goal;
 	goal.target_pose = goalPose;
 	actionClient.sendGoal(goal);
-	actionClient.waitForResult();*/
+	actionClient.waitForResult();
 
-	std::cout << "NavPR callback triggered" << std::endl;
-
-	geometry_msgs::PoseStamped goalPose;
+	/*geometry_msgs::PoseStamped goalPose;
 	goalPose.pose.position.x = 0.25;
 	goalPose.pose.position.y = 0;
 	goalPose.pose.position.z = 0;
@@ -52,5 +57,19 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	move_base_msgs::MoveBaseGoal moveGoal;
 	moveGoal.target_pose = goalPose;
 	actionClient.sendGoal(moveGoal);
-	actionClient.waitForResult();
+	actionClient.waitForResult();*/
+}
+
+void NavPR::transformPose(tf::StampedTransform &transform, geometry:msgs::PoseStamped &pose) {
+	tf::Quaternion tfQuat = transform.getRotation();
+	tf::Vector3 tfOrigin = transform.getOrigin();
+
+	pose.pose.position.x += tfOrigin.getX();
+	pose.pose.position.y += tfOrigin.getY();
+	pose.pose.position.z += tfOrigin.getZ();
+
+	geometry_msgs::Quaternion rosQuat;
+	tf::quaternionTFToMsg(tfQuat, rosQuat);
+
+	
 }
