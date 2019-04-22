@@ -5,7 +5,7 @@
 #include <Eigen/Dense>
 
 TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node) 
-  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)) {}
+  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)), _navPR() {}
 
 void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   std::cout << "TFBroadcastPR callback triggered" << std::endl;
@@ -41,4 +41,6 @@ void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
                newPose.pose.position.z << std::endl;
 
   pub_pose.publish(newPose);
+  //In constructor, make navPR
+  _navPR.receivePose(newPose);
 }

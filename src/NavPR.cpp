@@ -3,7 +3,9 @@
 #include <tf/tf.h>
 #include <iostream>
 
-NavPR::NavPR(MoveBaseClient &ac) : actionClient(ac) {}
+NavPR::NavPR(MoveBaseClient &ac, ros::NodeHandle *node) :
+	actionClient(ac),
+	pubGoalPose(node->advertise<geometry_msgs::PoseStamped>("follower_goal_pose", 1)) {}
 
 void NavPR::receivePose(const geometry_msgs::Pose &pose) {}
 
@@ -17,59 +19,49 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	geometry_msgs::Quaternion goalOrientation;
 	tf::quaternionTFToMsg(quat, goalOrientation);
 
-	// Turn to face marker
-	geometry_msgs::PoseStamped turnPose;
-	turnPose.pose.position.x = 0;
-	turnPose.pose.position.y = 0;
-	turnPose.pose.position.z = 0;
-	turnPose.pose.orientation = goalOrientation;
-	turnPose.header = pose.header;
-
-	// Transform to robot frame
-	tf:TransformListener listener;
-	tf:StampedTransform transform;
-	listener.lookupTransform("camera_rgb_link", "base_link", ros::Time(0), transform);
-
-	move_base_msgs::MoveBaseGoal turnGoal;
-	turnGoal.target_pose = turnPose;
-	actionClient.sendGoal(turnGoal);
-	actionClient.waitForResult();
-
-	// Navigate to pose
+	// Determine position to drive to
 	geometry_msgs::PoseStamped goalPose;
 	goalPose.pose.position.x = pose.pose.position.x;
 	goalPose.pose.position.y = pose.pose.position.y;
 	goalPose.pose.position.z = 0;
-	goalPose.pose.orientation = pose.pose.orientation;
+	goalPose.pose.orientation = goalOrientation;
 	goalPose.header = pose.header;
+
+	// Transform pose to robot frame
+	tf:TransformListener listener;
+	tf:StampedTransform transform;
+	listener.lookupTransform("camera_rgb_link", "base_link", ros::Time(0), transform);
+	transformPose(transform, goalPose);
+
+	pubGoalPose.publish(goalPose);
 
 	move_base_msgs::MoveBaseGoal goal;
 	goal.target_pose = goalPose;
 	actionClient.sendGoal(goal);
 	actionClient.waitForResult();
-
-	/*geometry_msgs::PoseStamped goalPose;
-	goalPose.pose.position.x = 0.25;
-	goalPose.pose.position.y = 0;
-	goalPose.pose.position.z = 0;
-	goalPose.pose.orientation = pose.pose.orientation;
-
-	move_base_msgs::MoveBaseGoal moveGoal;
-	moveGoal.target_pose = goalPose;
-	actionClient.sendGoal(moveGoal);
-	actionClient.waitForResult();*/
 }
 
 void NavPR::transformPose(tf::StampedTransform &transform, geometry:msgs::PoseStamped &pose) {
-	tf::Quaternion tfQuat = transform.getRotation();
+	// Translate
 	tf::Vector3 tfOrigin = transform.getOrigin();
 
-	pose.pose.position.x += tfOrigin.getX();
-	pose.pose.position.y += tfOrigin.getY();
-	pose.pose.position.z += tfOrigin.getZ();
+	Eigen::MatrixXd position(3, 1);
+	position << pose.pose.position.x, pose.pose.position.y, pose.pose.position.z;
 
+	position(0, 0) += tfOrigin.getX();
+	position(1, 0) += tfOrigin.getY();
+	position(2, 0) += tfOrigin.getZ();
+
+	// Rotate
+	tf::Quaternion tfQuat = transform.getRotation();
 	geometry_msgs::Quaternion rosQuat;
 	tf::quaternionTFToMsg(tfQuat, rosQuat);
+	Eigen::Quaterniond rot(rosQuat.w, rosQuat.x, rosQuat.y, rosQuat.z);
 
-	
+	position = rot.normalized().toRotationMatrix() * position;
+
+	// Update pose reference
+	pose.pose.position.x = position(0, 0);
+	pose.pose.position.y = position(1, 0);
+	pose.pose.position.z = position(2, 0);
 }

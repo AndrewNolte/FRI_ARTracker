@@ -16,6 +16,9 @@ public:
   TFBroadcastPR(std::string topic_out, ros::NodeHandle *node);
 
   void receivePose(const geometry_msgs::Pose &pose);
+
+protected:
+	NavPR _navPR;
 };
 
 #endif

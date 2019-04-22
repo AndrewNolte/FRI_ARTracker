@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
 
   std::cout << "Building subscribers..." << std::endl;
 
-  NavPR navPr(ac);
+  NavPR navPr(ac, &node);
   ros::Subscriber sub = node.subscribe("translated_marker", 1, &NavPR::navCb, &navPr);
   tf::TransformListener tfl;
   AlvarMarker am(node, tfl, tfb, "nav_kinect_rgb_optical_frame");
