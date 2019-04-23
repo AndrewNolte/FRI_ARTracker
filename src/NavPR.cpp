@@ -23,22 +23,24 @@ void NavPR::receivePose(const geometry_msgs::Pose &pose) {
 	geometry_msgs::PoseStamped goalPose;
 	goalPose.pose.position.x = pose.position.x;
 	goalPose.pose.position.y = pose.position.y;
-	goalPose.pose.position.z = 0;
-	goalPose.pose.orientation = pose.orientation;
-  goalPose.header.frame_id = "level_mux_map";
-	// Transform pose to robot frame
-	/*tf::TransformListener listener;
+	goalPose.pose.position.z = pose.position.z;
 
-	tf::StampedTransform transform;
-	listener.lookupTransform("camera_link", "base_link", ros::Time(0), transform);
-	transformPose(transform, goalPose);
-
-	pubGoalPose.publish(goalPose);*/
-
-	//move_base_msgs::MoveBaseGoal goal;
-	//goal.target_pose = goalPose;
-	//actionClient.sendGoal(goal);
-	//actionClient.waitForResult();
+	move_base_msgs::MoveBaseGoal goal;
+	goal.target_pose = goalPose;
+	
+	goal.target_pose.header.frame_id = "base_link";
+	goal.target_pose.header.stamp = ros::Time::now();
+	
+	double angle = atan2(pose.position.z, pose.position.x);
+  tf::Quaternion direction;
+  direction.setRPY(0, 0, 0.2 * angle);
+  goal.target_pose.pose.orientation.w = direction.w();
+ 	goal.target_pose.pose.orientation.x = direction.x();
+  goal.target_pose.pose.orientation.y = direction.y();
+  goal.target_pose.pose.orientation.z = direction.z();
+	
+	actionClient.sendGoal(goal);
+	actionClient.waitForResult();
 }
 
 void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
