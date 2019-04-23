@@ -1,6 +1,8 @@
 #include "hw5/NavPR.h"
 #include <math.h>
 #include <tf/tf.h>
+#include <tf/transform_listener.h>
+
 #include <iostream>
 
 NavPR::NavPR(MoveBaseClient &ac, ros::NodeHandle *node) :
@@ -28,8 +30,9 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	goalPose.header = pose.header;
 
 	// Transform pose to robot frame
-	tf:TransformListener listener;
-	tf:StampedTransform transform;
+	tf::TransformListener listener;
+
+	tf::StampedTransform transform;
 	listener.lookupTransform("camera_rgb_link", "base_link", ros::Time(0), transform);
 	transformPose(transform, goalPose);
 
@@ -41,7 +44,7 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	actionClient.waitForResult();
 }
 
-void NavPR::transformPose(tf::StampedTransform &transform, geometry:msgs::PoseStamped &pose) {
+void NavPR::transformPose(tf::StampedTransform &transform, geometry_msgs::PoseStamped &pose) {
 	// Translate
 	tf::Vector3 tfOrigin = transform.getOrigin();
 

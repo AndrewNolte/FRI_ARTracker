@@ -18,7 +18,6 @@ public:
   void receivePose(const geometry_msgs::Pose &pose);
 
 protected:
-	NavPR _navPR;
 };
 
 #endif
