@@ -25,7 +25,7 @@ void NavPR::receivePose(const geometry_msgs::Pose &pose) {
 	goalPose.pose.position.y = pose.position.y;
 	goalPose.pose.position.z = 0;
 	goalPose.pose.orientation = pose.orientation;
-
+  goalPose.header.frame_id = "level_mux_map";
 	// Transform pose to robot frame
 	/*tf::TransformListener listener;
 
@@ -35,10 +35,10 @@ void NavPR::receivePose(const geometry_msgs::Pose &pose) {
 
 	pubGoalPose.publish(goalPose);*/
 
-	move_base_msgs::MoveBaseGoal goal;
-	goal.target_pose = goalPose;
-	actionClient.sendGoal(goal);
-	actionClient.waitForResult();
+	//move_base_msgs::MoveBaseGoal goal;
+	//goal.target_pose = goalPose;
+	//actionClient.sendGoal(goal);
+	//actionClient.waitForResult();
 }
 
 void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {

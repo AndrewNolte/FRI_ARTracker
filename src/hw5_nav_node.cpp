@@ -14,7 +14,7 @@ int main(int argc, char **argv) {
   ros::NodeHandle node;
 
   std::cout << "Contacting robot base..." << std::endl;
-
+	
   MoveBaseClient ac("move_base", true);
   while(!ac.waitForServer(ros::Duration(5.0)));
 
@@ -22,12 +22,12 @@ int main(int argc, char **argv) {
 
   std::string tfbTopicName = "transformed_marker";
 
-  TFBroadcastPR tfb(tfbTopicName, &node);
+	NavPR navPr(ac, &node);
+  //TFBroadcastPR tfb(tfbTopicName, &node, navPr);
   tf::TransformListener tfl;
-  AlvarMarker am(node, tfl, tfb, "nav_kinect_rgb_optical_frame");
+  AlvarMarker am(node, tfl, navPr, "nav_kinect_rgb_optical_frame");
 
-  NavPR navPr(ac, &node);
-  node.subscribe(tfbTopicName, 1, &NavPR::navCb, &navPr);
+  // node.subscribe(tfbTopicName, 1, &NavPR::navCb, &navPr);
 
   std::cout << "Spinning up..." << std::endl;
 

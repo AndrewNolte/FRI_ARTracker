@@ -3,9 +3,10 @@
 #include <iostream>
 #include "geometry_msgs/PoseStamped.h"
 #include <Eigen/Dense>
+#include "hw5/PoseRecipient.h"
 
-TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node)
-  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)) {}
+TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node, PoseRecipient &pr)
+  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)), _pr(pr) {}
 
 void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   std::cout << "TFBroadcastPR callback triggered" << std::endl;
@@ -19,7 +20,7 @@ void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   newPoseRotated = rot.normalized().toRotationMatrix() * newPoseRotated;
 
   geometry_msgs::PoseStamped newPose;
-  newPose.header.frame_id = "camera_link";
+  newPose.header.frame_id = "level_mux_map";
   newPose.header.stamp = ros::Time();
   newPose.pose.position.x = newPoseRotated(0,0) + pose.position.x;
   newPose.pose.position.y = newPoseRotated(1,0) + pose.position.y;
@@ -36,11 +37,6 @@ void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   newPose.pose.orientation.z = newPoseOrientation.z();
   newPose.pose.orientation.w = -newPoseOrientation.w();
 
-  std::cout << newPose.pose.position.x << " " <<
-               newPose.pose.position.y << " " <<
-               newPose.pose.position.z << std::endl;
-
   pub_pose.publish(newPose);
-  //In constructor, make navPR
-  // _navPR.receivePose(newPose);
+  _pr.receivePose(newPose.pose);
 }
