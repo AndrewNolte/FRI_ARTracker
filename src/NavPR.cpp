@@ -15,28 +15,28 @@ void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	std::cout << "NavPR callback triggered" << std::endl;
 
 	// Determine quaternion orientation to turn to
-	double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
+	/*double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
 	tf::Quaternion quat;
-	quat.setRPY(0, 0, turnAngle);
+	quat.setRPY(0, 0, turnAngle * 0.25);
 	geometry_msgs::Quaternion goalOrientation;
-	tf::quaternionTFToMsg(quat, goalOrientation);
+	tf::quaternionTFToMsg(quat, goalOrientation);*/
 
 	// Determine position to drive to
 	geometry_msgs::PoseStamped goalPose;
 	goalPose.pose.position.x = pose.pose.position.x;
 	goalPose.pose.position.y = pose.pose.position.y;
 	goalPose.pose.position.z = 0;
-	goalPose.pose.orientation = goalOrientation;
+	goalPose.pose.orientation = pose.pose.orientation;
 	goalPose.header = pose.header;
 
 	// Transform pose to robot frame
-	tf::TransformListener listener;
+	/*tf::TransformListener listener;
 
 	tf::StampedTransform transform;
-	listener.lookupTransform("camera_rgb_link", "base_link", ros::Time(0), transform);
+	listener.lookupTransform("camera_link", "base_link", ros::Time(0), transform);
 	transformPose(transform, goalPose);
 
-	pubGoalPose.publish(goalPose);
+	pubGoalPose.publish(goalPose);*/
 
 	move_base_msgs::MoveBaseGoal goal;
 	goal.target_pose = goalPose;
