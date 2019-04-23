@@ -1,4 +1,5 @@
 #include "hw5/AlvarMarker.h"
+#include <iostream>
 
 AlvarMarker::AlvarMarker(ros::NodeHandle &n, tf::TransformListener &tf_l, PoseRecipient &prIn, std::string fromFrame) : tfL(tf_l), pr(prIn), _fromFrame(fromFrame) {
   //subscriber to get tag information
@@ -6,6 +7,8 @@ AlvarMarker::AlvarMarker(ros::NodeHandle &n, tf::TransformListener &tf_l, PoseRe
 }
 
 void AlvarMarker::vis_cb(const visualization_msgs::Marker::ConstPtr& msg) {
+  std::cout << "AlvarMarker callback triggered" << std::endl;
+
   geometry_msgs::PoseStamped tag_pose;
   geometry_msgs::PoseStamped tag_rel_pose;
 

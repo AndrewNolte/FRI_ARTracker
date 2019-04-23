@@ -12,21 +12,22 @@ int main(int argc, char **argv) {
 
   ros::init(argc, argv, "hw5_nav_node");
   ros::NodeHandle node;
-  // TFBroadcastPR tfb("translated_marker", &node);
 
   std::cout << "Contacting robot base..." << std::endl;
 
-  // Wait while connection with base is established
   MoveBaseClient ac("move_base", true);
   while(!ac.waitForServer(ros::Duration(5.0)));
 
-  std::cout << "Building subscribers..." << std::endl;
+  std::cout << "Building PR chain..." << std::endl;
+
+  std::string tfbTopicName = "transformed_marker";
+
+  TFBroadcastPR tfb(tfbTopicName, &node);
+  tf::TransformListener tfl;
+  AlvarMarker am(node, tfl, tfb, "nav_kinect_rgb_optical_frame");
 
   NavPR navPr(ac, &node);
-  // ros::Subscriber sub = node.subscribe("translated_marker", 1, &NavPR::navCb, &navPr);
-  tf::TransformListener tfl;
-  AlvarMarker am(node, tfl, navPr, "nav_kinect_rgb_optical_frame");
-  // AlvarMarker am(node, tfl, tfb, "camera_rgb_frame");
+  node.subscribe(tfbTopicName, 1, &NavPR::navCb, &navPr);
 
   std::cout << "Spinning up..." << std::endl;
 
