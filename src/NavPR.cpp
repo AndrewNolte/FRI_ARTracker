@@ -9,7 +9,37 @@ NavPR::NavPR(MoveBaseClient &ac, ros::NodeHandle *node) :
 	actionClient(ac),
 	pubGoalPose(node->advertise<geometry_msgs::PoseStamped>("follower_goal_pose", 1)) {}
 
-void NavPR::receivePose(const geometry_msgs::Pose &pose) {}
+void NavPR::receivePose(const geometry_msgs::Pose &pose) {
+	std::cout << "NavPR callback triggered" << std::endl;
+
+	// Determine quaternion orientation to turn to
+	/*double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
+	tf::Quaternion quat;
+	quat.setRPY(0, 0, turnAngle * 0.25);
+	geometry_msgs::Quaternion goalOrientation;
+	tf::quaternionTFToMsg(quat, goalOrientation);*/
+
+	// Determine position to drive to
+	geometry_msgs::PoseStamped goalPose;
+	goalPose.pose.position.x = pose.position.x;
+	goalPose.pose.position.y = pose.position.y;
+	goalPose.pose.position.z = 0;
+	goalPose.pose.orientation = pose.orientation;
+
+	// Transform pose to robot frame
+	/*tf::TransformListener listener;
+
+	tf::StampedTransform transform;
+	listener.lookupTransform("camera_link", "base_link", ros::Time(0), transform);
+	transformPose(transform, goalPose);
+
+	pubGoalPose.publish(goalPose);*/
+
+	move_base_msgs::MoveBaseGoal goal;
+	goal.target_pose = goalPose;
+	actionClient.sendGoal(goal);
+	actionClient.waitForResult();
+}
 
 void NavPR::navCb(const geometry_msgs::PoseStamped &pose) {
 	std::cout << "NavPR callback triggered" << std::endl;

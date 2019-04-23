@@ -1,0 +1,6 @@
+devel_space: /home/users/fri/stefan_catkin_ws/src/FRI_ARTracker/devel
+install: false
+install_space: /home/users/fri/stefan_catkin_ws/src/FRI_ARTracker/install
+profile: default
+source_space: /home/users/fri/stefan_catkin_ws/src/FRI_ARTracker/src
+workspace: /home/users/fri/stefan_catkin_ws/src/FRI_ARTracker
