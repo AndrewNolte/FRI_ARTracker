@@ -13,7 +13,7 @@ NavPR::NavPR(MoveBaseClient& ac, ros::NodeHandle* node)
 
 void NavPR::receivePose(const geometry_msgs::Pose& pose)
 {
-    std::cout << "NavPR callback triggered" << std::endl;
+    std::cout << "NavPR receive pose triggered" << std::endl;
 
     // Determine quaternion orientation to turn to
     /*double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
@@ -23,24 +23,28 @@ void NavPR::receivePose(const geometry_msgs::Pose& pose)
 	tf::quaternionTFToMsg(quat, goalOrientation);*/
 
     // Determine position to drive to
-    geometry_msgs::PoseStamped goalPose;
-    goalPose.pose.position.x = pose.position.z;
-    goalPose.pose.position.y = -pose.position.x;
-    goalPose.pose.position.z = 0;
+    // geometry_msgs::PoseStamped goalPose;
+    // goalPose.pose.position.x = goalPose.pose.position.y = -pose.position.x;
+    // goalPose.pose.position.z = 0;
 
     move_base_msgs::MoveBaseGoal goal;
-    goal.target_pose = goalPose;
-
     goal.target_pose.header.frame_id = "base_link";
     goal.target_pose.header.stamp = ros::Time::now();
 
-    double angle = atan2(pose.position.z, pose.position.x);
-    tf::Quaternion direction;
-    direction.setRPY(0, 0, 0.2 * angle);
+    goal.target_pose.pose.position.x = pose.position.z;
+    goal.target_pose.pose.position.y = -pose.position.x;
+    goal.target_pose.pose.position.z = 0;
+
+    // double angle = atan2(pose.position.z, pose.position.x);
+    // tf::Quaternion direction;
+    // direction.setRPY(0, 0, 0.2 * angle);
     goal.target_pose.pose.orientation.w = 1; //direction.w();
     goal.target_pose.pose.orientation.x = 0;
     goal.target_pose.pose.orientation.y = 0;
     goal.target_pose.pose.orientation.z = 0;
+
+    std::cout << target_pose.pose.position.x << std::endl;
+    std::cout << target_pose.pose.position.y << std::endl;
 
     actionClient.sendGoal(goal);
     actionClient.waitForResult();
@@ -48,7 +52,7 @@ void NavPR::receivePose(const geometry_msgs::Pose& pose)
 
 void NavPR::navCb(const geometry_msgs::PoseStamped& pose)
 {
-    std::cout << "NavPR callback triggered" << std::endl;
+    std::cout << "NavPR cb triggered" << std::endl;
 
     // Determine quaternion orientation to turn to
     /*double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
