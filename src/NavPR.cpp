@@ -19,7 +19,7 @@ void NavPR::receivePose(const geometry_msgs::Pose& pose) {
     goal.target_pose.header.frame_id = "base_link";
     goal.target_pose.header.stamp = ros::Time::now();
     // Manual transformation of axes (x->z, y->-x)
-    goal.target_pose.pose.position.x = pose.position.z * BETA
+    goal.target_pose.pose.position.x = pose.position.z * BETA;
     goal.target_pose.pose.position.y = -pose.position.x * BETA;
     goal.target_pose.pose.position.z = 0;
     goal.target_pose.pose.orientation.w = 1;
