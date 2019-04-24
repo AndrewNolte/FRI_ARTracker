@@ -5,8 +5,8 @@
 #include <Eigen/Dense>
 #include "hw5/PoseRecipient.h"
 
-TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node, PoseRecipient *pr)
-  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)), _pr(pr) {}
+TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node)
+  : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)) {}
 
 // Receives a pose from Alvar
 void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
@@ -43,6 +43,4 @@ void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   newPose.pose.orientation.w = -newPoseOrientation.w();
 
   pub_pose.publish(newPose);
-  if (_pr != nullptr)
-    _pr->receivePose(newPose.pose);
 }

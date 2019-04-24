@@ -11,10 +11,9 @@ class TFBroadcastPR : public PoseRecipient {
 protected:
   ros::Publisher pub_pose;
   tf::TransformBroadcaster br;
-  PoseRecipient *_pr;
 
 public:
-  TFBroadcastPR(std::string topic_out, ros::NodeHandle *node, PoseRecipient *pr);
+  TFBroadcastPR(std::string topic_out, ros::NodeHandle *node);
 
   void receivePose(const geometry_msgs::Pose &pose);
 
