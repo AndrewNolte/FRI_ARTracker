@@ -135,11 +135,11 @@ include_directories(
 ## Declare a C++ executable
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(hw5_node
-#   src/hw5_node.cpp
-#   src/TFBroadcastPR.cpp
-#  src/AlvarMarker.cpp
-# ) 
+add_executable(hw5_node
+  src/hw5_node.cpp
+  src/TFBroadcastPR.cpp
+  src/AlvarMarker.cpp
+) 
 
 add_executable(hw5_nav_node
   src/hw5_nav_node.cpp
@@ -159,9 +159,9 @@ add_executable(hw5_nav_node
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(hw5_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(hw5_node
+  ${catkin_LIBRARIES}
+)
 
 target_link_libraries(hw5_nav_node
   ${catkin_LIBRARIES}

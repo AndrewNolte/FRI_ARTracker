@@ -24,7 +24,7 @@ void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
 
   // Add translation to transformation in progress
   geometry_msgs::PoseStamped newPose;
-  newPose.header.frame_id = "base_link";
+  newPose.header.frame_id = "camera_link";
   newPose.header.stamp = ros::Time();
   newPose.pose.position.x = newPoseRotated(0,0) + pose.position.x;
   newPose.pose.position.y = newPoseRotated(1,0) + pose.position.y;
