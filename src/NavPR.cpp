@@ -30,22 +30,24 @@ void NavPR::receivePose(const geometry_msgs::Pose& pose)
     move_base_msgs::MoveBaseGoal goal;
     goal.target_pose.header.frame_id = "base_link";
     goal.target_pose.header.stamp = ros::Time::now();
-
-    goal.target_pose.pose.position.x = pose.position.z;
-    goal.target_pose.pose.position.y = -pose.position.x;
+		//double  norm = 	
+    goal.target_pose.pose.position.x = pose.position.z*.6;
+    goal.target_pose.pose.position.y = -pose.position.x * .6;
     goal.target_pose.pose.position.z = 0;
 
     // double angle = atan2(pose.position.z, pose.position.x);
     // tf::Quaternion direction;
-    // direction.setRPY(0, 0, 0.2 * angle);
+    // direction.setRPY(0, 0, 0.2 * angle);	
     goal.target_pose.pose.orientation.w = 1; //direction.w();
     goal.target_pose.pose.orientation.x = 0;
     goal.target_pose.pose.orientation.y = 0;
     goal.target_pose.pose.orientation.z = 0;
 
-    std::cout << target_pose.pose.position.x << std::endl;
-    std::cout << target_pose.pose.position.y << std::endl;
+    std::cout << goal.target_pose.pose.position.x << std::endl;
+    std::cout << goal.target_pose.pose.position.y << std::endl;
 
+
+	pubGoalPose.publish(goal.target_pose);
     actionClient.sendGoal(goal);
     actionClient.waitForResult();
 }
