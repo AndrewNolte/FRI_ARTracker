@@ -5,27 +5,32 @@
 #include <Eigen/Dense>
 #include "hw5/PoseRecipient.h"
 
-TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node, PoseRecipient &pr)
+TFBroadcastPR::TFBroadcastPR(std::string topic_out, ros::NodeHandle *node, PoseRecipient *pr)
   : pub_pose(node->advertise<geometry_msgs::PoseStamped>(topic_out, 1)), _pr(pr) {}
 
+// Receives a pose from Alvar
 void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   std::cout << "TFBroadcastPR callback triggered" << std::endl;
 
+  // Translate 1 meter along the z axis
   Eigen::Quaterniond rot(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
   Eigen::MatrixXd newPoseRotated(3, 1);
   newPoseRotated(0, 0) = 0;
   newPoseRotated(1, 0) = 0;
   newPoseRotated(2, 0) = 1;
 
+  // Rotate 1 meter translation to marker orientation
   newPoseRotated = rot.normalized().toRotationMatrix() * newPoseRotated;
 
+  // Add translation to transformation in progress
   geometry_msgs::PoseStamped newPose;
-  newPose.header.frame_id = "level_mux_map";
+  newPose.header.frame_id = "base_link";
   newPose.header.stamp = ros::Time();
   newPose.pose.position.x = newPoseRotated(0,0) + pose.position.x;
   newPose.pose.position.y = newPoseRotated(1,0) + pose.position.y;
   newPose.pose.position.z = newPoseRotated(2,0) + pose.position.z;
 
+  // Flip pi radians around the z axis
   Eigen::MatrixXd zAxis(3, 1);
   zAxis << 0, 1, 0;
   Eigen::Quaterniond newPoseOrientation(pose.orientation.w, pose.orientation.x, pose.orientation.y, pose.orientation.z);
@@ -38,5 +43,6 @@ void TFBroadcastPR::receivePose(const geometry_msgs::Pose &pose) {
   newPose.pose.orientation.w = -newPoseOrientation.w();
 
   pub_pose.publish(newPose);
-  _pr.receivePose(newPose.pose);
+  if (_pr != nullptr)
+    _pr->receivePose(newPose.pose);
 }

@@ -7,7 +7,7 @@ int main(int argc, char **argv) {
 
   ros::NodeHandle n;
   tf::TransformListener tfl;
-  TFBroadcastPR broadcaster("translated_marker", &n);
+  TFBroadcastPR broadcaster("translated_marker", &n, nullptr);
 
   AlvarMarker am(n, tfl, broadcaster, "camera_rgb_frame");
 

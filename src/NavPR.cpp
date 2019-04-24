@@ -5,40 +5,24 @@
 
 #include <iostream>
 
-NavPR::NavPR(MoveBaseClient& ac, ros::NodeHandle* node)
-    : actionClient(ac)
-    , pubGoalPose(node->advertise<geometry_msgs::PoseStamped>("follower_goal_pose", 1))
-{
-}
+NavPR::NavPR(MoveBaseClient& ac, ros::NodeHandle* node) :
+  actionClient(ac),
+  pubGoalPose(node->advertise<geometry_msgs::PoseStamped>("follower_goal_pose", 1)) {}
 
-void NavPR::receivePose(const geometry_msgs::Pose& pose)
-{
+// Receives a pose from Alvar
+void NavPR::receivePose(const geometry_msgs::Pose& pose) {
     std::cout << "NavPR receive pose triggered" << std::endl;
 
-    // Determine quaternion orientation to turn to
-    /*double turnAngle = atan2(pose.pose.position.y, pose.pose.position.x);
-	tf::Quaternion quat;
-	quat.setRPY(0, 0, turnAngle * 0.25);
-	geometry_msgs::Quaternion goalOrientation;
-	tf::quaternionTFToMsg(quat, goalOrientation);*/
-
-    // Determine position to drive to
-    // geometry_msgs::PoseStamped goalPose;
-    // goalPose.pose.position.x = goalPose.pose.position.y = -pose.position.x;
-    // goalPose.pose.position.z = 0;
-
+    // Build nav goal
+    const float BETA = 0.6;
     move_base_msgs::MoveBaseGoal goal;
     goal.target_pose.header.frame_id = "base_link";
     goal.target_pose.header.stamp = ros::Time::now();
-		//double  norm = 	
-    goal.target_pose.pose.position.x = pose.position.z*.6;
-    goal.target_pose.pose.position.y = -pose.position.x * .6;
+    // Manual transformation of axes (x->z, y->-x)
+    goal.target_pose.pose.position.x = pose.position.z * BETA
+    goal.target_pose.pose.position.y = -pose.position.x * BETA;
     goal.target_pose.pose.position.z = 0;
-
-    // double angle = atan2(pose.position.z, pose.position.x);
-    // tf::Quaternion direction;
-    // direction.setRPY(0, 0, 0.2 * angle);	
-    goal.target_pose.pose.orientation.w = 1; //direction.w();
+    goal.target_pose.pose.orientation.w = 1;
     goal.target_pose.pose.orientation.x = 0;
     goal.target_pose.pose.orientation.y = 0;
     goal.target_pose.pose.orientation.z = 0;
@@ -46,12 +30,12 @@ void NavPR::receivePose(const geometry_msgs::Pose& pose)
     std::cout << goal.target_pose.pose.position.x << std::endl;
     std::cout << goal.target_pose.pose.position.y << std::endl;
 
-
-	pubGoalPose.publish(goal.target_pose);
+	  pubGoalPose.publish(goal.target_pose);
     actionClient.sendGoal(goal);
     actionClient.waitForResult();
 }
 
+// Deprecated
 void NavPR::navCb(const geometry_msgs::PoseStamped& pose)
 {
     std::cout << "NavPR cb triggered" << std::endl;
@@ -86,6 +70,7 @@ void NavPR::navCb(const geometry_msgs::PoseStamped& pose)
     actionClient.waitForResult();
 }
 
+// Deprecated
 void NavPR::transformPose(tf::StampedTransform& transform, geometry_msgs::PoseStamped& pose)
 {
     // Translate
